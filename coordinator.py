@@ -24,6 +24,7 @@ class LianderCoordinator(DataUpdateCoordinator):
 
         data = []
         for connection in connections:
+            ean = connection["ean"]
             try:
                 meter_reading = await self.api.request_meter_reading(ean)
                 _LOGGER.warning("Meter reading response for %s: %s", ean, meter_reading)
@@ -32,7 +33,7 @@ class LianderCoordinator(DataUpdateCoordinator):
                 meter_reading = None
 
             data.append({
-                "ean": connection["ean"],
+                "ean": ean,
                 "status": connection["status"],
                 "meter_reading": meter_reading,
             })
