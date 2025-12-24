@@ -1,6 +1,6 @@
 import voluptuous as vol
 from homeassistant import config_entries
-from .const import DOMAIN
+from .const import DOMAIN, CONF_USERNAME, CONF_PASSWORD
 
 class LianderConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
@@ -13,11 +13,8 @@ class LianderConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         schema = vol.Schema({
-            vol.Required("username"): str,
-            vol.Required("password"): str,
+            vol.Required(CONF_USERNAME, description={"name": "Email"}): vol.Email(),
+            vol.Required(CONF_PASSWORD, description={"name": "Password"}): str,
         })
 
-        return self.async_show_form(
-            step_id="user",
-            data_schema=schema,
-        )
+        return self.async_show_form(step_id="user", data_schema=schema)
