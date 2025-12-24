@@ -32,7 +32,7 @@ class LianderApi:
 
         return self._token
 
-    async def get_profile(self):
+    async def get_connections(self):
         return await self._request(
             "GET",
             f"{BASE_URL}/profielen/me",
