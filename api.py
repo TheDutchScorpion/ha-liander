@@ -1,0 +1,47 @@
+import aiohttp
+
+BASE_URL = "https://mijn-liander-gateway.web.liander.nl/api/v1"
+
+class LianderApi:
+    def __init__(self, username: str, password: str, session):
+        self._username = username
+        self._password = password
+        self._session = session
+        self._token = None
+
+    async def _request(self, method, url, headers=None, json=None):
+        async with self._session.request(method, url, headers=headers, json=json) as response:
+            response.raise_for_status()
+
+            return await response.json()
+
+    async def get_access_token(self):
+        if self._token:
+            return self._token
+
+        result = await self._request(
+            "POST",
+            f"{BASE_URL}/auth/login",
+            headers={"Content-Type": "application/json"},
+            json={
+                "username": self._username,
+                "password": self._password,
+            },
+        )
+        self._token = result["jwt"]
+
+        return self._token
+
+    async def get_profile(self):
+        return await self._request(
+            "GET",
+            f"{BASE_URL}/profielen/me",
+            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
+        )
+
+    async def request_meter_reading(self, ean: str):
+        return await self._request(
+            "POST",
+            f"{BASE_URL}/aansluitingen/{ean}/meterstand-aanvraag",
+            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
+        )
