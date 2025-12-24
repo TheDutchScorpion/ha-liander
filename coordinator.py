@@ -19,7 +19,7 @@ class LianderCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         connections = await self.api.get_connections()
-        connections = connections["aansluitingen"]
+        connections = connections.get("aansluitingen")
         connections = connections["elektra"] + connections["gas"]
 
 #         for aansluiting in self.aansluitingen:

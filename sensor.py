@@ -9,7 +9,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
     for connetion in coordinator.data:
         type = connetion["type"]
         ean = connetion["ean"]
-        status = connetion.get("status", "unknown")
+        status = connetion["status"]
 
         entities.extend([
             EANSensor(type, ean),
