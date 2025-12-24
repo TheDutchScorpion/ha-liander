@@ -33,6 +33,7 @@ class LianderCoordinator(DataUpdateCoordinator):
                 meter_reading = None
 
             data.append({
+                "type": connection["type"],
                 "ean": ean,
                 "status": connection["status"],
                 "meter_reading": meter_reading,
