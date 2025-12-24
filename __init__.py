@@ -7,7 +7,7 @@ from .api import LianderApi
 from .coordinator import LianderCoordinator
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    session = async_get_clientsession()
+    session = async_get_clientsession(hass)
     api = LianderApi(entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD], session)
 
     coordinator = LianderCoordinator(hass, api)
