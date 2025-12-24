@@ -1,0 +1,11 @@
+{
+  "domain": "liander",
+  "name": "Liander",
+  "version": "0.1.0",
+  "documentation": "https://github.com/TheDutchScorpion/ha-liander",
+  "issue_tracker": "https://github.com/TheDutchScorpion/ha-liander/issues",
+  "config_flow": false,
+  "requirements": [],
+  "iot_class": "cloud_polling",
+  "codeowners": ["@TheDutchScorpion"]
+}
