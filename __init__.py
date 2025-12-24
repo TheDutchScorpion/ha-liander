@@ -1,12 +1,13 @@
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import DOMAIN, PLATFORMS, CONF_USERNAME, CONF_PASSWORD
 from .api import LianderApi
 from .coordinator import LianderCoordinator
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    session = hass.helpers.aiohttp_client.async_get_clientsession()
+    session = async_get_clientsession()
     api = LianderApi(entry.data[CONF_USERNAME], entry.data[CONF_PASSWORD], session)
 
     coordinator = LianderCoordinator(hass, api)
