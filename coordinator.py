@@ -24,16 +24,17 @@ class LianderCoordinator(DataUpdateCoordinator):
 
         data = []
         for connection in connections:
-#             try:
-#                 meter_reading = await self.api.request_meter_reading(ean)
-#             except Exception as err:
-#                 _LOGGER.warning("Meterstand aanvraag mislukt voor %s: %s", ean, err)
+            try:
+                meter_reading = await self.api.request_meter_reading(ean)
+                _LOGGER.warning("Meter reading response for %s: %s", ean, meter_reading)
+            except Exception as err:
+                _LOGGER.warning("Meterstand aanvraag mislukt voor %s: %s", ean, err)
+                meter_reading = None
 
             data.append({
                 "ean": connection["ean"],
                 "status": connection["status"],
-                "meter_reading": 0,
-#                 "meter_reading": meter_reading,
+                "meter_reading": meter_reading,
             })
 
-        return connections
+        return data
