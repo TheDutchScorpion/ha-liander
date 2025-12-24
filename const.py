@@ -1,4 +1,4 @@
-DOMAIN = "mijn_liander"
+DOMAIN = "liander"
 PLATFORMS = ["sensor"]
 
 CONF_USERNAME = "username"
