@@ -31,7 +31,7 @@ class BaseSensor(SensorEntity):
             name=f"Aansluiting {self._ean[-4:]}",
             manufacturer="Liander",
             model=self._type,
-            configuration_url="https://mijn.liander.nl",
+            configuration_url="https://mijn-liander.web.liander.nl",
         )
 
 class EANSensor(BaseSensor):
