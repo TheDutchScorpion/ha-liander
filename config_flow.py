@@ -13,7 +13,7 @@ class LianderConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         schema = vol.Schema({
-            vol.Required(CONF_USERNAME): vol.Email(),
+            vol.Required(CONF_USERNAME): str,
             vol.Required(CONF_PASSWORD): str,
         })
 
