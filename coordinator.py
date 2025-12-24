@@ -22,11 +22,18 @@ class LianderCoordinator(DataUpdateCoordinator):
         connections = connections[0]["aansluitingen"]
         connections = connections["elektra"] + connections["gas"]
 
-#         for aansluiting in self.aansluitingen:
-#             ean = aansluiting["ean"]
+        data = []
+        for connection in connections:
 #             try:
-#                 await self.api.request_meter_reading(ean)
+#                 meter_reading = await self.api.request_meter_reading(ean)
 #             except Exception as err:
 #                 _LOGGER.warning("Meterstand aanvraag mislukt voor %s: %s", ean, err)
+
+            data.append({
+                "ean": connection["ean"],
+                "status": connection["status"],
+                "meter_reading": 0,
+#                 "meter_reading": meter_reading,
+            })
 
         return connections
