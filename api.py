@@ -35,7 +35,7 @@ class LianderApi:
     async def get_connections(self):
         return await self._request(
             "GET",
-            f"{BASE_URL}/profielen/me",
+            f"{BASE_URL}/aansluitingen",
             headers={"Authorization": f"Bearer {await self.get_access_token()}"},
         )
 
