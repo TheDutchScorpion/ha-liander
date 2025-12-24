@@ -6,29 +6,31 @@ async def async_setup_entry(hass, entry, async_add_entities):
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
     entities = []
-    for aansluiting in coordinator.data:
-        ean = aansluiting["ean"]
-        status = aansluiting.get("status", "unknown")
+    for connetion in coordinator.data:
+        type = connetion["type"]
+        ean = connetion["ean"]
+        status = connetion.get("status", "unknown")
 
         entities.extend([
-            EANSensor(ean),
-            StatusSensor(ean, status),
-            MeterReadingSensor(ean, coordinator),
+            EANSensor(type, ean),
+            StatusSensor(type, ean, status),
+            MeterReadingSensor(type, ean, coordinator),
         ])
 
     async_add_entities(entities)
 
 class BaseSensor(SensorEntity):
-    def __init__(self, ean: str):
+    def __init__(self, type: str, ean: str):
+        self._type = type
         self._ean = ean
 
     @property
     def device_info(self):
         return DeviceInfo(
             identifiers={(DOMAIN, self._ean)},
-            name=f"Liander aansluiting {self._ean[-4:]}",
+            name=f"Aansluiting {self._ean[-4:]}",
             manufacturer="Liander",
-            model="Slimme meter aansluiting",
+            model=self._type,
             configuration_url="https://mijn.liander.nl",
         )
 
@@ -46,8 +48,8 @@ class EANSensor(BaseSensor):
         return self._ean
 
 class StatusSensor(BaseSensor):
-    def __init__(self, ean, status):
-        super().__init__(ean)
+    def __init__(self, type, ean, status):
+        super().__init__(type, ean)
         self._status = status
 
     @property
@@ -63,8 +65,8 @@ class StatusSensor(BaseSensor):
         return self._status
 
 class MeterReadingSensor(BaseSensor):
-    def __init__(self, ean, coordinator):
-        super().__init__(ean)
+    def __init__(self, type, ean, coordinator):
+        super().__init__(type, ean)
         self.coordinator = coordinator
 
     @property
