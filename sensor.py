@@ -3,15 +3,12 @@ from homeassistant.helpers.entity import DeviceInfo
 from .const import DOMAIN
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    data = hass.data[DOMAIN][entry.entry_id]
-    profile = data["profile"]
-    coordinator = data["coordinator"]
+    coordinator = hass.data[DOMAIN][entry.entry_id]
 
     entities = []
-
-    for koppeling in profile["aansluitingKoppelingen"]:
-        ean = koppeling["ean"]
-        status = koppeling["status"]
+    for aansluiting in coordinator.data:
+        ean = aansluiting["ean"]
+        status = aansluiting.get("status", "unknown")
 
         entities.extend([
             EANSensor(ean),

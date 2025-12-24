@@ -4,13 +4,15 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN, UPDATE_INTERVAL_HOURS
 
+_LOGGER = logging.getLogger(__name__)
+
 class LianderCoordinator(DataUpdateCoordinator):
     """Coordinator voor dagelijkse Liander API updates."""
 
     def __init__(self, hass, api):
         super().__init__(
             hass,
-            logger=hass.logger,
+            logger=_LOGGER,
             name=DOMAIN,
             update_interval=timedelta(hours=UPDATE_INTERVAL_HOURS),
         )
@@ -27,6 +29,6 @@ class LianderCoordinator(DataUpdateCoordinator):
             try:
                 await self.api.request_meter_reading(ean)
             except Exception as err:
-                hass.logger.warning("Meterstand aanvraag mislukt voor %s: %s", ean, err)
+                _LOGGER.warning("Meterstand aanvraag mislukt voor %s: %s", ean, err)
 
         return self.aansluitingen
