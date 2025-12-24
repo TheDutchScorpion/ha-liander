@@ -13,8 +13,8 @@ class LianderConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
 
         schema = vol.Schema({
-            vol.Required(CONF_USERNAME, description={"name": "Email"}): vol.Email(),
-            vol.Required(CONF_PASSWORD, description={"name": "Password"}): str,
+            vol.Required(CONF_USERNAME): vol.Email(),
+            vol.Required(CONF_PASSWORD): str,
         })
 
         return self.async_show_form(step_id="user", data_schema=schema)
