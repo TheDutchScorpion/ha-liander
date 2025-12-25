@@ -22,6 +22,12 @@ The integration creates the following sensors for each connection:
 - Only cumulative readings are tracked (`state_class: total_increasing`).
 
 ## Installation
+### HACS (recommended)
+Click the button below to quickly install this integration through HACS
+
+[![Add to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=TheDutchScorpion&repository=ha-liander&category=integration)
+
+### Manual
 1. Download this repository.
 2. Place the `ha-liander` folder in your Home Assistant `custom_components` directory.
 3. Restart Home Assistant.
@@ -32,3 +38,7 @@ The integration creates the following sensors for each connection:
 3. Search for **Liander**.
 4. Enter your **Liander username and password**.
 5. Home Assistant will automatically discover your electricity and gas connections.
+
+## Privacy Notice
+This integration only uses your credentials to authenticate with Liander’s API.  
+No data is sent anywhere other than between Home Assistant and Liander.
