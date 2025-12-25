@@ -14,7 +14,7 @@ The integration creates the following sensors for each connection:
 | `meter_reading` | Meter reading     | `energy` (electricity) / `gas` (gas) | `kWh` (electricity) / `m³` (gas) |
 | `status`        | Connection status | None              | None                    |
 
-![Sensor Card Example](assets/cards.png)
+<img src="assets/cards.png" alt="Sensor Card Example" width="500">
 
 ### Notes
 - Electricity readings are reported in kilowatt-hours (`kWh`).
