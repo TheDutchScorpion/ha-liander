@@ -9,26 +9,32 @@ class LianderApi:
         self._session = session
         self._token = None
 
-    async def _request(self, method, url, headers=None, json=None):
-        async with self._session.request(method, url, headers=headers, json=json) as response:
-            response.raise_for_status()
+    async def _request(self, method, url, headers=None, json=None, retry=True):
+        if headers is None:
+            headers = {}
 
+        if self._token is None:
+            await self.get_access_token()
+
+        headers["Authorization"] = f"Bearer {self._token}"
+        async with self._session.request(method, url, headers=headers, json=json) as response:
+            if response.status == 401 and retry:
+                await self.get_access_token()
+
+                return await self._request(method, url, headers=headers, json=json, retry=False)
+
+            response.raise_for_status()
             return await response.json()
 
     async def get_access_token(self):
-        if self._token:
-            return self._token
-
-        result = await self._request(
-            "POST",
+        result = await self._session.post(
             f"{BASE_URL}/auth/login",
             headers={"Content-Type": "application/json"},
-            json={
-                "username": self._username,
-                "password": self._password,
-            },
+            json={"username": self._username, "password": self._password},
         )
-        self._token = result["jwt"]
+        result.raise_for_status()
+        data = await result.json()
+        self._token = data["jwt"]
 
         return self._token
 
@@ -36,28 +42,24 @@ class LianderApi:
         return await self._request(
             "GET",
             f"{BASE_URL}/aansluitingen",
-            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
         )
 
     async def get_connection_energy_supplier(self, ean: str):
         return await self._request(
             "GET",
             f"{BASE_URL}/aansluitingen/{ean}/energieleverancier",
-            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
         )
 
     async def get_meter_issues(self, ean: str):
         return await self._request(
             "GET",
             f"{BASE_URL}/aansluitingen/{ean}/meterstoring",
-            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
         )
 
     async def get_meter_reading_request_id(self, ean: str):
         result = await self._request(
             "POST",
             f"{BASE_URL}/aansluitingen/{ean}/meterstand-aanvraag",
-            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
         )
 
         return result.get("meterstandAanvraagId")
@@ -66,7 +68,6 @@ class LianderApi:
         result = await self._request(
             "GET",
             f"{BASE_URL}/aansluitingen/{ean}/meterstand-aanvraag/{request_id}",
-            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
         )
 
         return result
