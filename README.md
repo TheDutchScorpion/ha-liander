@@ -11,12 +11,12 @@ The integration creates the following sensors for each connection:
 
 | Sensor Key       | Description       | Device Class         | Unit of Measurement       |
 |-----------------|-----------------|-------------------|-------------------------|
-| `ean`           | EAN number       | None              | None                    |
-| `status`        | Connection status | None              | None                    |
 | `meter_reading` | Meter reading     | `energy` (electricity) / `gas` (gas) | `kWh` (electricity) / `m³` (gas) |
+| `status`        | Connection status | None              | None                    |
+
+![Sensor Card Example](assets/cards.png)
 
 ### Notes
-
 - Electricity readings are reported in kilowatt-hours (`kWh`).
 - Gas readings are reported in cubic meters (`m³`).
 - Only cumulative readings are tracked (`state_class: total_increasing`).
