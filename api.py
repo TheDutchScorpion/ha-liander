@@ -39,9 +39,34 @@ class LianderApi:
             headers={"Authorization": f"Bearer {await self.get_access_token()}"},
         )
 
-    async def request_meter_reading(self, ean: str):
+    async def get_connection_energy_supplier(self, ean: str):
         return await self._request(
+            "GET",
+            f"{BASE_URL}/aansluitingen/{ean}/energieleverancier",
+            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
+        )
+
+    async def get_meter_issues(self, ean: str):
+        return await self._request(
+            "GET",
+            f"{BASE_URL}/aansluitingen/{ean}/meterstoring",
+            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
+        )
+
+    async def get_meter_reading_request_id(self, ean: str):
+        result = await self._request(
             "POST",
             f"{BASE_URL}/aansluitingen/{ean}/meterstand-aanvraag",
             headers={"Authorization": f"Bearer {await self.get_access_token()}"},
         )
+
+        return result.get("meterstandAanvraagId")
+
+    async def get_meter_reading(self, ean: str, request_id: str):
+        result = await self._request(
+            "GET",
+            f"{BASE_URL}/aansluitingen/{ean}/meterstand-aanvraag/{request_id}",
+            headers={"Authorization": f"Bearer {await self.get_access_token()}"},
+        )
+
+        return result

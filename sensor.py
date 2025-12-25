@@ -1,3 +1,4 @@
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -36,16 +37,17 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entities = []
     for connection in coordinator.data:
         entities.extend([
-            LianderSensor(connection, description, entry)
+            LianderSensor(coordinator, connection, description, entry)
             for description in SENSOR_DESCRIPTIONS
         ])
 
     async_add_entities(entities)
 
-class LianderSensor(SensorEntity):
+class LianderSensor(CoordinatorEntity, SensorEntity):
     _attr_has_entity_name = True
 
-    def __init__(self, connection, description, entry):
+    def __init__(self, coordinator, connection, description, entry):
+        super().__init__(coordinator)
         self._connection = connection
         self._description = description
         self._entry = entry
