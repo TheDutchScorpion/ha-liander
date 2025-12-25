@@ -14,11 +14,6 @@ from .const import DOMAIN
 
 SENSOR_DESCRIPTIONS = [
     SensorEntityDescription(
-        key="ean",
-        name="EAN",
-        translation_key="ean"
-    ),
-    SensorEntityDescription(
         key="status",
         name="Status",
         translation_key="status"
@@ -27,7 +22,7 @@ SENSOR_DESCRIPTIONS = [
         key="meter_reading",
         name="Meter reading",
         translation_key="meter_reading",
-        icon="mdi:lightning-bolt",
+        icon="mdi:counter",
     ),
 ]
 
@@ -70,7 +65,7 @@ class LianderSensor(CoordinatorEntity, SensorEntity):
     def unique_id(self):
         ean = self._connection.get("ean")
 
-        return f"{self._entry.unique_id}.{self.device_name()}_{self._description.key}"
+        return f"{ean}_{self.device_name()}_{self._description.key}"
 
     @property
     def translation_key(self):
@@ -84,17 +79,17 @@ class LianderSensor(CoordinatorEntity, SensorEntity):
             identifiers={(DOMAIN, ean)},
             name=self.device_name(),
             manufacturer="Liander",
-            model=self._connection.get("type"),
+            model=f"{self._connection.get("type")} ({ean[-4:]})",
             configuration_url="https://mijn-liander.web.liander.nl",
+            serial_number=ean
         )
 
     def device_name(self):
-        ean = self._connection.get("ean")
         type = self._connection.get("type")
         if type == "Gasaansluiting":
-            return f"Gas meter {ean[-4:]}"
+            return "Gas meter"
         if type == "ElektraAansluiting":
-            return f"Electric meter {ean[-4:]}"
+            return "Electric meter"
         raise Exception(f"Unknown connection type: {type}")
 
     @property
