@@ -1,5 +1,6 @@
 from datetime import timedelta
 import logging
+from copy import deepcopy
 import asyncio
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -42,7 +43,8 @@ class LianderCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(err)
 
     async def _fetch_meter_readings(self, data):
-        for item in data:
+        cloned_data = deepcopy(data)
+        for item in cloned_data:
             ean = item["ean"]
             try:
                 request_id = await self.api.get_meter_reading_request_id(ean)
