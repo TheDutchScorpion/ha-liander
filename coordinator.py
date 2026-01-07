@@ -51,6 +51,7 @@ class LianderCoordinator(DataUpdateCoordinator):
                     await asyncio.sleep(15)
 
                     result = await self.api.get_meter_reading(ean, request_id)
+                    _LOGGER.warning("Received meter reading response: %s", result)
                     if result.get("laatstOntvangenOpDatum"):
                         type = item["type"]
                         if type == "Gasaansluiting":
@@ -65,7 +66,7 @@ class LianderCoordinator(DataUpdateCoordinator):
 
                         break
                 else:
-                    _LOGGER.warning("Geen meterstand ontvangen voor EAN %s binnen 1 minuut", ean)
+                    _LOGGER.warning("Unable to receive meter reading for EAN %s with request id %s within 5 minutes", ean, request_id)
 
             except Exception as e:
-                _LOGGER.error("Fout bij ophalen meterstand voor EAN %s: %s", ean, e)
+                _LOGGER.error("Error with receiving meter readings for EAN %s: %s", ean, e)
