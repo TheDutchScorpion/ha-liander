@@ -1,4 +1,5 @@
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -32,20 +33,22 @@ async def async_setup_entry(hass, entry, async_add_entities):
     entities = []
     for connection in coordinator.data:
         entities.extend([
-            LianderSensor(coordinator, connection, description, entry)
+            LianderSensor(coordinator, connection, description, hass, entry)
             for description in SENSOR_DESCRIPTIONS
         ])
 
     async_add_entities(entities)
 
-class LianderSensor(CoordinatorEntity, SensorEntity):
+class LianderSensor(CoordinatorEntity, SensorEntity, RestoreEntity):
     _attr_has_entity_name = True
 
-    def __init__(self, coordinator, connection, description, entry):
+    def __init__(self, coordinator, connection, description, hass, entry):
         super().__init__(coordinator)
         self._connection = connection
         self._description = description
+        self._hass = hass
         self._entry = entry
+        self._last_value = None
 
         if description.key == "meter_reading":
             type = connection.get("type")
@@ -56,6 +59,13 @@ class LianderSensor(CoordinatorEntity, SensorEntity):
                 self._attr_device_class = SensorDeviceClass.ENERGY
                 self._attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
             self._attr_state_class = SensorStateClass.TOTAL_INCREASING
+
+    async def async_added_to_hass(self):
+        await super().async_added_to_hass()
+
+        state = await self.async_get_last_state()
+        if state and state.state not in (None, "unknown"):
+            self._last_value = state.state
 
     @property
     def name(self):
@@ -100,8 +110,13 @@ class LianderSensor(CoordinatorEntity, SensorEntity):
     def native_value(self):
         match self._description.key:
             case "ean":
-                return self._connection.get("ean")
+                value = self._connection.get("ean")
             case "status":
-                return self._connection.get("status")
+                value = self._connection.get("status")
             case "meter_reading":
-                return self._connection.get("meter_reading", 0)
+                value = self._connection.get("meter_reading", 0)
+
+        if value is not None:
+            return value
+
+        return self._last_value
