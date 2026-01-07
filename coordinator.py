@@ -47,7 +47,9 @@ class LianderCoordinator(DataUpdateCoordinator):
             try:
                 request_id = await self.api.get_meter_reading_request_id(ean)
 
-                for _ in range(6):
+                for _ in range(20):
+                    await asyncio.sleep(15)
+
                     result = await self.api.get_meter_reading(ean, request_id)
                     if result.get("laatstOntvangenOpDatum"):
                         type = item["type"]
@@ -59,11 +61,9 @@ class LianderCoordinator(DataUpdateCoordinator):
                         else:
                             raise Exception(f"Unknown connection type: {type}")
 
-                        self.async_set_updated_data(data)
+                        self.async_set_updated_data(cloned_data)
 
                         break
-
-                    await asyncio.sleep(10)
                 else:
                     _LOGGER.warning("Geen meterstand ontvangen voor EAN %s binnen 1 minuut", ean)
 
