@@ -54,7 +54,8 @@ class LianderCoordinator(DataUpdateCoordinator):
                         if type == "Gasaansluiting":
                             item["meter_reading"] = result.get("gasVolume")
                         elif type == "ElektraAansluiting":
-                            item["meter_reading"] = (result.get("elektraImportT1", 0) + result.get("elektraImportT2", 0))
+                            wattage = (result.get("elektraImportT1", 0) + result.get("elektraImportT2", 0))
+                            item["meter_reading"] = wattage / 1000
                         else:
                             raise Exception(f"Unknown connection type: {type}")
 
