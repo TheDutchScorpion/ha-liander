@@ -108,15 +108,15 @@ class LianderSensor(CoordinatorEntity, SensorEntity, RestoreEntity):
 
     @property
     def native_value(self):
-        match self._description.key:
-            case "ean":
-                value = self._connection.get("ean")
-            case "status":
-                value = self._connection.get("status")
-            case "meter_reading":
-                value = self._connection.get("meter_reading", 0)
+        data = self.coordinator.data or []
+        ean = self._connection.get("ean")
 
-        if value is not None:
-            return value
+        for item in data:
+            if item["ean"] == ean:
+                value = item.get(self._description.key)
+                if value is not None:
+                    self._last_value = value
+
+                    return value
 
         return self._last_value

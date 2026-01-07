@@ -44,7 +44,7 @@ class LianderCoordinator(DataUpdateCoordinator):
 
     async def _fetch_meter_readings(self, data):
         cloned_data = deepcopy(data)
-        for item in cloned_data:
+        for index, item in enumerate(cloned_data):
             ean = item["ean"]
             try:
                 request_id = await self.api.get_meter_reading_request_id(ean)
@@ -57,14 +57,18 @@ class LianderCoordinator(DataUpdateCoordinator):
                     if result.get("laatstOntvangenOpDatum"):
                         type = item["type"]
                         if type == "Gasaansluiting":
-                            item["meter_reading"] = result.get("gasVolume")
+                            meter_reading = result.get("gasVolume")
                         elif type == "ElektraAansluiting":
                             wattage = (result.get("elektraImportT1", 0) + result.get("elektraImportT2", 0))
-                            item["meter_reading"] = wattage / 1000
+                            meter_reading = wattage / 1000
                         else:
                             raise Exception(f"Unknown connection type: {type}")
 
-                        self.async_set_updated_data(cloned_data)
+                        updated_item = {**item, "meter_reading": meter_reading}
+                        updated_data = list(cloned_data)
+                        updated_data[index] = updated_item
+
+                        self.async_set_updated_data(updated_data)
 
                         break
                 else:
