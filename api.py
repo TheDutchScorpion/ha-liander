@@ -1,6 +1,6 @@
 import aiohttp
 
-BASE_URL = "https://mijn-liander-gateway.web.liander.nl/api/v1"
+BASE_URL = "https://mijn-liander-ckz-service.web.liander.nl/api/v1"
 
 class LianderApi:
     def __init__(self, username: str, password: str, session):
